@@ -1,7 +1,7 @@
 # C1000K
 ## 目的
-测试单线程reactor能支否支持百万并发连接。
-### 已知1个连接由5元组决定：
+测试单线程reactor能否支持百万连接。
+##### 1个连接由5元组唯一确定：
 * local_ip
 * local_port
 * peer_ip
@@ -30,33 +30,49 @@ client可用内存3G以上
 ## 修改内核TCP参数
 
 ### server sysctl设置  
-sudo vim /etc/sysctl.conf  
-net.ipv4.tcp_mem = 524288 1048576 1572864  
-net.ipv4.tcp_wmem = 512 512 1024  
-net.ipv4.tcp_rmem = 512 512 1024  
-fs.file-max = 2000000  
-net.nf_conntrack_max = 2000000   
-fs.nr_open=2000000  
-  
-sysctl –p  
-  
-如果报错：Error: /proc/sys/net/nf_conntrack_max no such file or directory  
-解决方法：sudo modprobe ip_conntrack  
+    sudo vim /etc/sysctl.conf  
+添加：
 
+    net.ipv4.tcp_mem = 524288 1048576 1572864  
+    net.ipv4.tcp_wmem = 512 512 1024  
+    net.ipv4.tcp_rmem = 512 512 1024  
+    fs.file-max = 2000000  
+    net.nf_conntrack_max = 2000000   
+    fs.nr_open=2000000  
+
+```
+sudo modprobe ip_conntrack  
+sudo sysctl –p  
+```
+  
 ### client sysctl设置  
-sudo vim /etc/sysctl.conf  
-net.ipv4.tcp_mem = 262144 524288 1048576  
-net.ipv4.tcp_wmem = 256 256 512  
-net.ipv4.tcp_rmem = 256 256 512  
-fs.file-max = 2000000  
-net.nf_conntrack_max = 2000000    
-fs.nr_open=2000000  
-  
-sysctl –p  
+    sudo vim /etc/sysctl.conf  
+ 
+ 添加：
 
+    net.ipv4.tcp_mem = 262144 524288 1048576  
+    net.ipv4.tcp_wmem = 256 256 512  
+    net.ipv4.tcp_rmem = 256 256 512  
+    fs.file-max = 2000000  
+    net.nf_conntrack_max = 2000000    
+    fs.nr_open=2000000  
+  
+```
+sudo modprobe ip_conntrack  
+sudo sysctl –p  
+```
+### 参数解释
+* tcp_mem的单位是页，默认4KB  
+* 上面将server的内核TCP内存页最大值设为1572864，即6G内存，client是1048576，即4G内存  
+* tcp_wmem和tcp_rmem的单位是字节，降低该值，较少内存占用，server设置最低值512，client设置最低值256。测试完应该注释掉，避免缓冲区太小导致ssh连不上等问题。  
+* 当打开文件超过1048576时要先设置fs.nr_open，否则下面limits.conf设置无效
 
 ## 修改进程最大fd数量（ulimit）  
-/etc/security/limits.conf  
+
+    sudo vim /etc/security/limits.conf  
+    
 最后加上两行：  
-`*               soft    nofile          2000000  
-*               hard    nofile          2000000  `
+
+    *               soft    nofile          2000000  
+    *               hard    nofile          2000000  
+
