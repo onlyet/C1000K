@@ -94,6 +94,8 @@ make
 * server_first_port server开启100个端口，默认端口范围是9900-9999，故server_first_port是9900  
 
 ## 测试结果
+下图191.7是server，191.20和191.21是client
+
 达到100万连接，server占用4.86G内存，client占用1.4G内存。减去初始值server占用了2.6G左右，client占用了1.2G左右。
 ![avatar](/screenshot/1.png)
 
