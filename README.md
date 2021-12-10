@@ -61,7 +61,7 @@ sudo sysctl –p
 sudo modprobe ip_conntrack  
 sudo sysctl –p  
 ```
-### 参数解释
+##### 参数解释
 * tcp_mem的单位是页，默认4KB  
 * 上面将server的内核TCP内存页最大值设为1572864，即6G内存，client是1048576，即4G内存  
 * tcp_wmem和tcp_rmem的单位是字节，降低该值，较少内存占用，server设置最低值512，client设置最低值256。测试完应该注释掉，避免缓冲区太小导致ssh连不上等问题。  
@@ -71,8 +71,28 @@ sudo sysctl –p
 
     sudo vim /etc/security/limits.conf  
     
-最后加上两行：  
-
+最后加上4行：  
+  
+    *               soft    core            unlimited  
+    *               soft    stack           12000  
     *               soft    nofile          2000000  
     *               hard    nofile          2000000  
+    
+##### 参数解释
+* 几个值是2000000的参数都是保证理论最大连接数能达到200万  
+* stack 设置栈的最大容量，单位是KB。200万连接分摊给2个client，1个client是100万，epoll_event结构体占用12字节，12x100万=1200万=12000KB，所以设置stack为12000
+
+## 编译
+make
+
+## 运行server
+./server
+
+## 运行client
+./client server_ip server_first_port  
+
+* server_first_port server开启100个端口，默认端口范围是9900-9999，故server_first_port是9900  
+
+## 测试结果
+![avatar](/home/picture/1.png)
 
