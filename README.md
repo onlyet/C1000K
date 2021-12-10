@@ -94,5 +94,15 @@ make
 * server_first_port server开启100个端口，默认端口范围是9900-9999，故server_first_port是9900  
 
 ## 测试结果
-![avatar](/home/picture/1.png)
+达到100万连接，server占用4.86G内存，client占用1.4G内存。减去初始值server占用了2.6G左右，client占用了1.2G左右。
+![avatar](/screenshot/1.png)
 
+115万连接的时候server被kill
+![avatar](/screenshot/2.png)
+
+恢复正常后的内存占用，可以看到server占用2.1G，client占用200M左右
+![avatar](/screenshot/3.png)
+
+server被kill后/var/log/syslog的日志输出，out of memory
+![avatar](/screenshot/4.png)
+![avatar](/screenshot/5.png)
