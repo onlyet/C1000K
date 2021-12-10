@@ -1,0 +1,12 @@
+
+#.vscode
+
+# ignore excutable file
+#*
+#!/**/
+#!*.*
+
+*
+!*/
+!*.*
+.vscode
