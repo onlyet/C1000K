@@ -9,7 +9,7 @@
 * protocal  
 
 已知ubuntu-1604的默认的端口范围：32768-60999  
-假设client有20000个fd能用，server开100个端口，用2个client去连接server，则理论最大连接数是：20000 x 100 x 2 = 400万。  
+假设client有20000个端口能用，server开100个端口，用2个client去连接server，则理论最大连接数是：20000 x 100 x 2 = 400万。  
 
 ## 代码修改
 在reactor的基础上，server开启100个监听端口。  
